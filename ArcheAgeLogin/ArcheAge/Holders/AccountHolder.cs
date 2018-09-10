@@ -28,10 +28,15 @@ namespace ArcheAgeLogin.ArcheAge.Holders
         /// <returns></returns>
         public static Account GetAccount(string name)
         {
-            return m_DbAccounts.FirstOrDefault(acc => acc.Name == name);
+            foreach (var acc in m_DbAccounts)
+            {
+                if (acc.Name == name) return acc;
+            }
+
+            return null;
         }
 
-        /// <summary>
+       /// <summary>
         /// Fully Load Account Data From Current MySql DataBase.
         /// </summary>
         public static void LoadAccountData()
@@ -49,7 +54,7 @@ namespace ArcheAgeLogin.ArcheAge.Holders
                     account.AccessLevel = reader.GetByte("mainaccess");
                     account.AccountId = reader.GetInt64("id");
                     account.Name = reader.GetString("name");
-                    account.Password = reader.GetString("password");
+                    //account.Password = reader.GetString("password");
                     account.Token = reader.GetString("token");
                     account.LastEnteredTime = reader.GetInt64("last_online");
                     account.LastIp = reader.GetString("last_ip");
@@ -61,13 +66,13 @@ namespace ArcheAgeLogin.ArcheAge.Holders
                 command = null;
                 reader = null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                if(e.Message.IndexOf("using password: YES") >= 0)
+                if (e.Message.IndexOf("using password: YES") >= 0)
                 {
                     Logger.Trace("Error: Incorrect username or password");
                 }
-                else if (e.Message.IndexOf("Unable to connect to any of the specified MySQL hosts")>=0)
+                else if (e.Message.IndexOf("Unable to connect to any of the specified MySQL hosts") >= 0)
                 {
                     Logger.Trace("Error: Unable to connect to database");
                 }
@@ -85,7 +90,7 @@ namespace ArcheAgeLogin.ArcheAge.Holders
             }
             Logger.Trace("Load to {0} accounts", m_DbAccounts.Count);
         }
-       
+
         /// <summary>
         /// Inserts Or Update Existing Account Into your current Login Server MySql DataBase.
         /// </summary>
@@ -100,22 +105,22 @@ namespace ArcheAgeLogin.ArcheAge.Holders
                 if (m_DbAccounts.Contains(account))
                 {
                     command = new MySqlCommand(
-                        //"UPDATE `accounts` SET `id` = @id, `accountid` = @accountid, `name` = @name, `password` = @password, `token` = @token, `mainaccess` = @mainaccess, `useraccess` = @useraccess, `last_ip` = @lastip, `last_online` = @lastonline, `cookie` = @cookie, `characters` = @characters WHERE `id` = @aid",
-                        "UPDATE `accounts` SET `id` = @id, `name` = @name, `password` = @password, `token` = @token, `mainaccess` = @mainaccess, `useraccess` = @useraccess, `last_ip` = @lastip, `last_online` = @lastonline, `cookie` = @cookie, `characters` = @characters WHERE `id` = @aid",
+                        "UPDATE `accounts` SET `id` = @id, `name` = @name, `token` = @token, `mainaccess` = @mainaccess," +
+                        " `useraccess` = @useraccess, `last_ip` = @lastip, `last_online` = @lastonline, `cookie` = @cookie, `characters` = @characters" +
+                        " WHERE `id` = @aid",
                         con);
                 }
                 else
                 {
                     command = new MySqlCommand(
-                        "INSERT INTO `accounts`(id, name, password, token,  mainaccess, useraccess, last_ip, last_online, characters, cookie)" +
-                        "VALUES(@id, @name, @password, @token, @mainaccess, @useraccess, @lastip, @lastonline, @characters, @cookie)",
+                        "INSERT INTO `accounts`(id, name, token,  mainaccess, useraccess, last_ip, last_online, characters, cookie)" +
+                        "VALUES(@id, @name, @token, @mainaccess, @useraccess, @lastip, @lastonline, @characters, @cookie)",
                         con);
                 }
                 MySqlParameterCollection parameters = command.Parameters;
                 parameters.Add("@id", MySqlDbType.Int64).Value = account.AccountId;
-                //parameters.Add("@accountid", MySqlDbType.Int64).Value = account.AccountId; //TODO: удалить в бд
                 parameters.Add("@name", MySqlDbType.String).Value = account.Name;
-                parameters.Add("@password", MySqlDbType.String).Value = account.Password;
+                //parameters.Add("@password", MySqlDbType.String).Value = account.Password;
                 parameters.Add("@token", MySqlDbType.String).Value = account.Token;
                 parameters.Add("@mainaccess", MySqlDbType.Byte).Value = account.AccessLevel;
                 parameters.Add("@useraccess", MySqlDbType.Byte).Value = account.Membership;
