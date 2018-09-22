@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LocalCommons.UID;
 
 namespace ArcheAge.ArcheAge.Structuring
 {
@@ -13,39 +14,8 @@ namespace ArcheAge.ArcheAge.Structuring
         {
         }
 
-        public Character(long id, int accountId, int characterId, byte worldId, string charName, byte charRace, byte charGender,
-            string gUid, long v, int[] type, float[] weight, float scale, float rotate, float moveX, float moveY,
-            int lip, int leftPupil, int rightPupil, int eyebrow, int decor, string modifiers, byte[] ability, byte level, byte ext)
-        {
-            Id = id;
-            AccountId = accountId;
-            CharacterId = characterId;
-            WorldId = worldId;
-            CharName = charName;
-            CharRace = charRace;
-            CharGender = charGender;
-            Guid = gUid;
-            V = v;
-            Type = type;
-            Weight = weight;
-            Scale = scale;
-            Rotate = rotate;
-            MoveX = moveX;
-            MoveY = moveY;
-            Lip = lip;
-            LeftPupil = leftPupil;
-            RightPupil = rightPupil;
-            Eyebrow = eyebrow;
-            Decor = decor;
-            Modifiers = modifiers;
-            Ability = ability;
-            Level = level;
-            Ext = ext;
-        }
-
-        internal long Id { get; set; }
-        public int AccountId { get; set; }
-        public int CharacterId { get; set; }
+        public uint AccountId { get; set; }
+        public uint CharacterId { get; set; }
         public byte WorldId { get; set; }
         public string CharName { get; set; }
         public byte CharRace { get; set; }
@@ -67,5 +37,23 @@ namespace ArcheAge.ArcheAge.Structuring
         public byte[] Ability { get; set; } = new byte[3];
         public byte Level { get; set; }
         public byte Ext { get; set; }
+        public int CharBody { get; set; }
+        public long X { get; set; }
+        public long Y { get; set; }
+        public float Z { get; set; }
+        public int Head { get; set; }
+        public int Chest { get; set; }
+        public int Legs { get; set; }
+        public int Gloves { get; set; }
+        public int Feet { get; set; }
+        public int Weapon { get; set; }
+        public int WeaponExtra { get; set; }
+        public int WeaponRanged { get; set; }
+        public int Instrument { get; set; }
+        public int NewbieClothPackId { get; set; }
+        public int NewbieWeaponPackId { get; set; }
+        public int FactionId { get; set; }
+        public int StartingZoneId { get; set; }
+        public int ModelRef { get; set; }
     }
 }

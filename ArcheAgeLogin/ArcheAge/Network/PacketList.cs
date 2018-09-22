@@ -7,8 +7,7 @@ using LocalCommons.Network;
 using LocalCommons.Utilities;
 using System;
 using System.Linq;
-using System.Security.Cryptography;
-// ReSharper disable All
+using LocalCommons.Cookie;
 
 namespace ArcheAgeLogin.ArcheAge.Network
 {
@@ -17,26 +16,26 @@ namespace ArcheAgeLogin.ArcheAge.Network
     /// </summary>
     public static class PacketList
     {
-        private static int m_Maintained;
-        private static PacketHandler<GameConnection>[] m_GHandlers;
-        private static PacketHandler<ArcheAgeConnection>[] m_LHandlers;
-        private static string clientVersion;
+        private static int _mMaintained;
+        private static PacketHandler<GameConnection>[] _mGHandlers;
+        private static PacketHandler<ArcheAgeConnection>[] _mLHandlers;
+        private static string _clientVersion;
 
         public static PacketHandler<GameConnection>[] GHandlers
         {
-            get { return m_GHandlers; }
+            get { return _mGHandlers; }
         }
 
         public static PacketHandler<ArcheAgeConnection>[] LHandlers
         {
-            get { return m_LHandlers; }
+            get { return _mLHandlers; }
         }
 
         public static void Initialize(string clientVersion)
         {
-            PacketList.clientVersion = clientVersion;
-            m_GHandlers = new PacketHandler<GameConnection>[0x20];
-            m_LHandlers = new PacketHandler<ArcheAgeConnection>[0x30];
+            _clientVersion = clientVersion;
+            _mGHandlers = new PacketHandler<GameConnection>[0x20];
+            _mLHandlers = new PacketHandler<ArcheAgeConnection>[0x30];
 
             Registration();
         }
@@ -45,23 +44,23 @@ namespace ArcheAgeLogin.ArcheAge.Network
         private static void ViewDecodeDD05()
         {
             string msg = "";
-            msg = "2901DD05B5764616E6B6877711DFC872642E90A5FA714111E2FE7DADDDF7C297623300D4A4E8CC6B225090C069F33D3D251E52993DED3084D219407F7D5B49F8056AFBBD196F3FDC3C651CB6981BE5A34F7E4D3AB0A6CDC5C2DCB7718CC5CFD3E678F09E1083C394B97ED9F6C60678368A3ADD3014B0AFA10D2B479013A2C700E308E29D41F4A3D942D2AC2E53BD5564EC6BA609B4CF477FF47976BF0D1AE78D4C54B71F5796663707D7A7774010E0B0815121F1C192623202D2A3734313E3B4845424F4C595653505D6A6764616E7B7875727FED0A0704011E1B1815122F2C292623303D3A3744414E4B4855525F5C596663606D6A7774717E7B0805020F0C191613101D2A2724212E3B3835323F4C494643405D5A5754516E6B6865727F7C797704110E16E8FDAD0C0F7";
+            msg = "0700DD05D7BDF35310";
             ViewDecode2(msg);
-            msg = "1400DD05AFE722865627F6CF97087265899FE9242175";
+            msg = "2A00DD051E6FDD01D3A2724213E3B3835323F4C4946434053B833B2816E6B6865727F7C797704010E0B08151";
             ViewDecode2(msg);
-            msg = "5000DD055F20C6C282625271B0CB11257381D3E43840DBA6F90B2C06A99043486EEFCD4B6745F31F35E70901D0441D85A978EE825322F4C494643405D5A5754517E7B7875627F7C797704010E0B0115081B0";
+            msg = "FE00DD050DF94A96663707D7A7775020F0C090613101D1A1724212E2B2835323F3C494643404D5A5754515E6B6865626F7C7976737FED0A0704011E1B1815122F2C292623303D3A3734414E4B4845525F5C596663606D6A7774717E7C0906030FED1A1714111E2B2825222F3C393633304D4A4744415E5B5855526F6C696663707D7A7774010E0B0815121F1C192623202D2A3734313E3B4845424F4C595653505D6A6764616E7B7875727FED0A0704011E1B1815122F2C292623303D3A3744414E4B4855525F5C596663606D6A7774717E7B0805020F0C191613101D2A2724212E3B3835323F4C494643405D5A5754516E6B6865727F7C797704010E0B08151";
             ViewDecode2(msg);
-            msg = "A900DD052893A332FFE0A119356592C1B87D0D80A6E0105A6BBA8A10367483C1AB3C4882A3F1145673BEC8196E6492D9EE3F4690ACF7111C72A0CA052A138BC0F02457CEEABA044766BEC3172173C9D3F536418AFEC91E347486C3E0254B9DACBC16416ABCCD13257981C7AB25579CB3B905596BBBC2052472C8C0F5224398A0E2041E62A0C7162B66909CF3265197ACF5175128B6D710217F92C5AB314B98B0B911236489DFEF51E71747";
+            msg = "0209DD057B049DB48456F261C495603654B3CB183376E4B5921E33FED0BB724111A9B382524AF2C393633303D4A4744414E5B5D1D53AF79DCD6636A22DA6724710E0B0805120F1C191636702D2A2734313E3B3845424F4C495653505D5A6764616E6B7875727F7D0A0704010E1F8BCF47BF2C292623303D3A3734414E4B5845525F5C595663606D6A6774717E7B7805020F0C09161315D8AA272E4E8E3B6835323F3C494653404D5A4334516E6B6865627F7C797674010E0B0805121F1C191623202D2A2734313E3B3845424BDF9303F3505D5A6764616E6B7875727F6C090603001D1A1714112E2B2825223F3C393633404D4A4741B4EE5B522AC27F3C696673707D7A6805020F1E391613101D1A2724212E2B3835323F4C494643405D5A5754516E6B6865627F7C7976779C375FA704111E1B1815222F2C292633203D3A3744414E4B4855525F5C696663606D7A7774717F0C051753001795B704412E2B2825223F2C393633586D4A4744515E5B5855626F6C696673707D7A7704010E0B1815121F1C292623202D3A33A7EB6BEB4845424F5C595653506D6A6774617E7B7875730FED0A0704111E1B1815222F2C292633303DBBC7444BD1EB4805525F5C696663706D7A776DC17E0B0805020F1C191613102D2A2724213E3B3835324F4C494643505D5A5754616E6FFBAF27DF7C7A0704010E0B1815121F1C392623202D3A3734313E4B4845424F5C595653506D6A67646F8F0B787FDDAF1C590603101D1A1734212E2B3015323F3C394643404D4A5754515E5B6865626F6C797673707E0B0805020F1C19161314BEF07284213E3B3835424F4C494653504D5A5764616E6B6875727F7C7906030FED0A1714111E1B282733AF2C338993206D4A4744414E5B4855525F74496663707D7A7775020F0C090613101D1A1724212E2B2835323F3C394643404D4A5750C2840EC865626F6C797673707D0A0704110E1B1815122F2C292623303D3A3734414E4B4845525F5C5066736065E3B774736E5B7906030FED0A07C4C11E1B282DAF4E1C19363330344F4404761589DC15626F6C696663707D7977E47EFE0B080AE21F1C191623202D2FD734313E3B3845424F4C495653585EAA6764616E7B7076827FE509F704011E1B1815122A6C29967CF07E7A6764B12EBB2845525F5C595E60906D6264847176788A90CAFCEC091E10E01D2224D4212638C286D1B0B9BCF41CB5A8E808ADF18E849865627F74797674000E0B07151002C0DD158390929A173B5E62CBF848524B3C59EA9A905D6A676AE16E7B7878E98F0C090603001D1AD8B5F12F0538E521DD2A7B040DA12D4A474AD15FD5D3CBE26D4F1969B3707D7B04F9C20F0C191613101D2A2724212E3B3835323F4C494643405D5A5754516E6B6865627F7C7976730FED0A0704111E1B109410A6054C8633303D3A4744CD297EE855525F5C69666360E11D42C4717F0C0906030014D52071A12E2B2825623F3C393633404D4A4754515E5B5865626F6C697673707D7A0704010E0B1815121F1C292623202D3A3734313E4B4845E24F5C58B653506D6A6764617E7B7876030FED0A0714111E1B1825222F3C293633203D3A4744414E49D17C37EF5C696663606D7A777D1F0E1B086506494B7F40D5E03D0A3A24113E32D815424D8C594655005D5A5764616E6B6875727F7C7F4F05F11BBEA81519132A994623202D3A3734213E4B4850124F5C595653606D6A6764717E7B7875020F0C090613101D1A1724212E2B2835323F35B14496F04D4A5754515E5B6865626F6C697673707E0B0805021F1C191613202D2A2724313E3B3835478AFC494D4F66ED3A5764616E6B6865727F7C6D66030FED0A1714111E1B2825222F3C393633304D4A4744415E5B5855526F6C69666379F578A2C5020F0C090613101D1A1724213E2B2835323F3C394643404D4A5754515E6B6865626F7C797396CFED012B32B17E1B1815122F2C392623302F0A3734414E4B4845525F5C595663606D6A6774717E7B7906030FED1A1714111E2B282CAA2DE9893633304D4A4744415E5B5855426F6C696663707D7A7774010E0B0805121F1C191623202D2636643135077EF5224F4C595653504D6A6764794E7B7875727FED0A0704011E1B1815122F2C292623303D3A3734414E4B4845525F5C50EE61B5DD6A7774717E7B0805020F0C190613101D2A2724212E3B3835323F4C494643405D5A5754516EEAE86569334AC91674010E0B0815021F1C193F93202D2A3734313E3B4845424F4C595653505D6A6764616E7B7875727F0C09060300149215C1A12E2B2825223F3C393643404D5A4754515E5B5865626F6C697673707D7B0805020F0C19161DE16D2A2C78179E5B3835323F4C495643405D427754516E6B6865727F7C7976030FED0A0714111E1B1825222F2C293633303D3A474448C6498DE5525F5C696663606D7A7774716F0C090603001D1A1714212E2B2825323F3C393643404D4A4545D15E503453D20F6C697673707D6A070401162B1815121F1C292623202D3A3734314E4B4845425F5C595653606D6A6764717E7B787F8B0D38BA0714111E1B1825222F2C293623303D3A4744414E4B5855525F5C696663607D7A7774710E0CFCD5021EDA291612900D2A2724313E3B28E5924F444A93B3102D5A5768203814FA657EC5608E2738B00E0B1815121F2C292623203D3A3734314E4B4845425F5C195653606D6A6764717E7B78750A0CFC090613101D1214D4212628D835323F3C394643400D51974EF15E6B6865626F7C79767B72FE0B0006F21F141AEEEF037EDA272C32CE3B3036B24F444AB864E8E2A0A9AA9E9495B68A87FBFF86F6030FED1217141FEE25D82BC22F2C093633304D4A4654415E5B585AB26F0FD2F66EF0739A7A35008EB2B7161D6012195514212E2B3833723F3C494643404B1A57545E5E6B6865626F7C7BCB237FED0C4704011E14881512212C292623303D3A3734414E4B4855525F5C596663606D6A7774717E7C0906030FED1A1714111E2B2825222F3C393EB202C46322F4415E5B585552977ACCD663707D7A7704010EF31EB0A21F1C192623202D2B01F3248E3B4845424F4C595653505D6A6764616E7B7875727FED0A0704011E1B1815122F2C292633303D3A3744414E4B4855525F5C596663C06D6A7694717E7B0805020F0C191613101D2A2724212E3B3835323F4C594643504D5A5754616E6B6AEC5B1ACC797704010E0B08151";
             ViewDecode2(msg);
-            msg = "2A00DD05AD65DD01D2A2724212E3B3835323F4C494643405B5F1754516E6B6865727F7C797704010E0B08151";
+            msg = "2400DD05B4F2FC825223F4C495643405D55A754516E634B7D47DF7C797704010E0B081514272";
             ViewDecode2(msg);
-            msg = "7700DD05B397E33000EEA3724212E2B4845524F4C595643505D7A6764616E7B7875767BED0A0704011E1B1815122F2C292623303D3A3744414E4B4855525F5C596663606D6A7774717E7B0805020F0C191613101D2A2724212E3B3835323F4C49465340AC6A5754566A4B3865727F7C781348DDCAC8F8B99F2";
+            msg = "0F00DD05F935BAC697704010E0B0815186";
             ViewDecode2(msg);
-            msg = "0900DD051FB63B51104170";
+            msg = "8804DD0515D5EF6637073CE3754711E0E4E822559FAA976330D2D0A272DC11E3B3AF5224F4B594653505D5A5764616E6B68757737758A12B1B10E0B6994B26F1C292623202D2A3734312B1B4845424F5C595653506D6A6764617E7B7875020F0C090613101D1A1724212E2B2832F4D879894643404D4A5754515E5B6865726F6C797673707E0B0805020F1C191613102D2A2724313E3EFD85424FCDC8E623505D5A5764617E6B6875661F7C7906030FED0A1714111E1B2825222F2C393633303D4A4744414E5B5855526F6C6EA08435CD7A7775020F0C090613101D1A0724212E2B2835323F3C394643404D4A5754515E5B6865626A89C97673EE6CAA7704011E1B1815022F2C293413303D3A3734414E4B4845525F5C595663606D6A6774717E7B7906030FED0A17141119DDCF60922F3C393633304D4A4744415E4B5855526F6C696663707D7A7774010E0B0805121F1C19162F317D2A2795B09E4B3845424F4C494653505D724764616E7B7875727FED0A0704011E1B1815122F2C292623303D3A3734414E4B48455599BB1CE663606D6A6774717E7B7805021F0C191613101D2A2724212E3B3835323F4C494643405D5A57D5D16E6BD9E4C20F7C797674010E1B08051206AC191623202D2A2734313E3B4845424F4C595653505D6A6764616E7B7875727F0C0901C5E758AA1714112E2B2825223F3C393623404D4A4744515E5B5865626F6C697673707D7B0805020F02E8661310DCAB8754212E3B3835322F4C49465B605D5A5754516E6B6865627F7C7976730FED0A0714111E1B1825222F2C293633303D3D81A304FE4B5855525F5C696663606D7A6774717F0C090603001D1A1714112E2B2825223F3C393643425CCA475480DFFB2865626F6C697663707D7A1F24010E0B1815121F1C292623202D3A3734313E4B4845424F5C595653506D6A67647179BD9F33B30FED0A0714111E1B1825222F3C293633303D3A4744414E4B5855525F5C696663606D7A777D159E0B0CF0E21F1F993613237D0A2724313E3B3825929F4C4E467FE06D2A576468E7DB47F76273C666F324348FDB1815121F1C292623202D3A3734314E4B4845425F5C59E653606D6A6764717E7B787502070FF90613101D1A1F27D12E232BC5323F3C394643404C0A5104627E6B6865626F7C7D5673710608F8050A1CEC191E10D02D2224D4313638C8354A4CBC494E50AF8FFE18946566C498717AD08C49044CFFED0A171C111E260E24324FCCB49B90A14F28A50EA712EBED0C9BA00C09F02E6452FEC5171F9D0F17EB9C005284172BB31C94F9669BFE3A79382F998833993B789E62A955E22EB265E3F660493678FBA5BE1B1B76822F26076623303D3A3734414E4B4845525F5C595663606D6A7774717E7C0906030FED1A1714111E2B2825222F3C39363338CC78CE6D24EE5B5855526F6CE50156C07D7A7774010E0B0889752AAC192623202D2A373F37C97EF845424F4C595653505D6A6764616E7B7875727FED0A0704011E1B1815122F2C292623303D3A3734414E4B4855525F5C596663606DCA7774709E7B0805020F0C191613101D2A2724212E3B3835323F4C494653405D5A4754516E6B686560F6551CC704010E0B081512555";
             ViewDecode2(msg);
-            msg = "1C00DD054B63BE04D5AF754516E6B9895827F7C897704010E0B0815EC4F4";
+            msg = "2400DD053BF7FC825223F4C495643405D55A754516E634B7D47DF7C797704010E0B081514272";
             ViewDecode2(msg);
-            msg = "0E00DD055A2F3BC697704010E0B08151";
+            /*msg = "0E00DD055A2F3BC697704010E0B08151";
             ViewDecode2(msg);
             msg = "0900DD05FAB9B151114270";
             ViewDecode2(msg);
@@ -90,7 +89,7 @@ namespace ArcheAgeLogin.ArcheAge.Network
             msg = "1D00DD05F77171040231744514E6BD86214285B4FE1F2E30D2BD8B5DC4F423";
             ViewDecode2(msg);
             msg = "1D00DD05E07271044342744517E6BD86214285B4FE1F2E30D1BD8B5DC4F423";
-            ViewDecode2(msg);
+            ViewDecode2(msg);*/
         }
         ///для теста
         private static void ViewDecode3(string message)
@@ -345,8 +344,8 @@ namespace ArcheAgeLogin.ArcheAge.Network
             //------------------------------------------------------------------------------------------------
             //Client Delegates Packets
             //------------------------------------------------------------------------------------------------
-            switch (clientVersion)
-            {   
+            switch (_clientVersion)
+            {
                 case "1"://1.0.1406 Feb 11 2014
                     //последовательность пакетов при подключении клиента к LoginServer
                     //Register(0x01, Handle_CARequestAuthPacket_0x01);
@@ -362,8 +361,12 @@ namespace ArcheAgeLogin.ArcheAge.Network
                     Register(0x01, Handle_CARequestAuthPacket_0x01);
                     Register(0x04, Handle_CARequestAuth_0x04); //пакет №1 от клиента
                     Register(0x0A, Handle_CAListWorld_0x0A);  //
+                    Register(0x0A, Handle_CAListWorld_0x0A);  //
                     Register(0x0B, Handle_CAEnterWorld_0x0B);  //
                     Register(0x0D, Handle_CARequestReconnect_0x0D);
+                    //Fix by Shannon
+                    Register(0x08, Handle_CAListWorld_0x0A);  //пакет №2 от test клиента
+                    Register(0x09, Handle_CAEnterWorld_0x0B);  //пакет №3 от test клиента
                     break;
                 case "3": //3.0.3.0
                     Register(0x06, Handle_CAChallengeResponse2_0X06); //пакет №1 от клиента
@@ -383,16 +386,14 @@ namespace ArcheAgeLogin.ArcheAge.Network
         }
 
         #region Game Server Delegates
-        //используется
         private static void Handle_UpdateCharacters(GameConnection net, PacketReader reader)
         {
-            long accountId = reader.ReadLEInt64();
+            uint accountId = reader.ReadLEUInt32();
             byte characters = reader.ReadByte(); //количество чаров на аккаунте
             Account currentAcc = AccountHolder.AccountList.FirstOrDefault(n => n.AccountId == accountId);
-            currentAcc.Characters = characters;
+            if (currentAcc != null) currentAcc.Characters = characters;
         }
 
-        //используется
         private static void Handle_RegisterGameServer(GameConnection net, PacketReader reader)
         {
             byte id = reader.ReadByte();
@@ -411,28 +412,24 @@ namespace ArcheAgeLogin.ArcheAge.Network
         private static void Handle_CARequestAuthPacket_0x01(ArcheAgeConnection net, PacketReader reader)
         {
             /*
-             Скорее всего это пакет от клиента на логинсервер
-
             CARequestAuthPacket_0x01
             Size Id   p_from   p_to     svc dev account_len account(aatest) mac_len mac              mac_len2 mac2             cpu
             3000 0100 0A000000 07000000 00  00  0600        616174657374    0800    0000000000000000 0800     E839DF54605F0000 52060200FFFBEBBF
-                                                ^
              */
-
             reader.Offset += 10; //скипаем 10 байт
-            int m_RUidLength = reader.ReadLEInt16(); //длина строки
-            string m_Uid = reader.ReadString(m_RUidLength); //считываем ID
+            int mRUidLength = reader.ReadLEInt16(); //длина строки
+            string mUid = reader.ReadString(mRUidLength); //считываем Name
             //long accId = Convert.ToInt64(m_Uid);
-            int m_RtokenLength = reader.ReadLEInt16(); // длина строки
-            //string m_RToken = reader.ReadHexString(m_RtokenLength); //считываем токен
-            Account n_Current = AccountHolder.AccountList.FirstOrDefault(n => n.Name == m_Uid);
-            if (n_Current != null)
+            int mRtokenLength = reader.ReadLEInt16(); // длина строки
+            string mRToken = reader.ReadHexString(mRtokenLength); //считываем токен
+            Account nCurrent = AccountHolder.AccountList.FirstOrDefault(n => n.Name == mUid);
+            if (nCurrent != null)
             {
-                Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " is landing");
+                Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " is landing");
                 //account numberexist
                 //if (n_Current.Token.ToLower() == m_RToken.ToLower())
                 {
-                    net.CurrentAccount = n_Current;
+                    net.CurrentAccount = nCurrent;
                     if (GameServerController.AuthorizedAccounts.ContainsKey(net.CurrentAccount.AccountId))
                     {
                         //Удалим результаты предыдущего коннекта для нормального реконнекта
@@ -440,44 +437,44 @@ namespace ArcheAgeLogin.ArcheAge.Network
                     }
                     //Write account number information Write Online account list
                     GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
-                    Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " landing success");
-                    net.SendAsync(new AcJoinResponse_0X00(clientVersion));
-                    net.SendAsync(new AcAuthResponse_0X03(clientVersion, net));
+                    Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " landing success");
+                    net.SendAsync(new AcJoinResponse_0X00(_clientVersion));
+                    net.SendAsync(new AcAuthResponse_0X03(_clientVersion, net));
                     return;
                 }
                 //Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " token verification failed：" + m_RToken.ToLower());
             }
             else
             {
-                Logger.Trace("Client try to login to a nonexistent account: " + m_Uid);
+                Logger.Trace("Client try to login to a nonexistent account: " + mUid);
                 //Make New Temporary
                 if (Settings.Default.Account_AutoCreation)
                 {
-                    Logger.Trace("Create new account: " + m_Uid);
-                    Account m_New = new Account
+                    Logger.Trace("Create new account: " + mUid);
+                    Account mNew = new Account
                     {
-                        AccountId = AccountHolder.AccountList.Count + 1,
+                        AccountId = Program.AccountUid.Next(),
                         LastEnteredTime = Utility.CurrentTimeMilliseconds(),
                         AccessLevel = 1,
                         LastIp = net.ToString(),
                         Membership = 1,
-                        Name = m_Uid,
+                        Name = mUid,
                         //Password = "change_password_now", //заглушка
                         Token = "m_RToken", //заглушка
                         Characters = 0
                     };
-                    net.CurrentAccount = m_New;
-                    AccountHolder.InsertOrUpdate(m_New);
+                    net.CurrentAccount = mNew;
+                    AccountHolder.InsertOrUpdate(mNew);
                     //Write account number information Write Online account list
                     GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
                     Logger.Trace("Account ID: " + net.CurrentAccount.AccountId + " & Account Name: " + net.CurrentAccount.Name + " landing success");
-                    net.SendAsync(new AcJoinResponse_0X00(clientVersion));
-                    net.SendAsync(new AcAuthResponse_0X03(clientVersion, net));
+                    net.SendAsync(new AcJoinResponse_0X00(_clientVersion));
+                    net.SendAsync(new AcAuthResponse_0X03(_clientVersion, net));
                     return;
                 }
 
                 net.CurrentAccount = null;
-                Logger.Trace("Сan not create account: " + m_Uid);
+                Logger.Trace("Сan not create account: " + mUid);
             }
             //If the front did not terminate, then the account number failed to log in
             net.SendAsync(new NP_ACLoginDenied_0x0C());
@@ -492,19 +489,19 @@ namespace ArcheAgeLogin.ArcheAge.Network
         {
             //3F00 0400 0A000000 0700000000 08000000000000000000 0600 616174657374200031E34F2B72D93BB25D5F27BE8A94C47800000000000000000000000000000000
             reader.Offset += 19; //скипаем 19 байт
-            int m_RUidLength = reader.ReadLEInt16(); //длина строки
-            string m_Uid = reader.ReadString(m_RUidLength); //считываем ID
+            int mRUidLength = reader.ReadLEInt16(); //длина строки
+            string mUid = reader.ReadString(mRUidLength); //считываем Name
             //long accId = Convert.ToInt64(m_Uid);
-            int m_RtokenLength = reader.ReadLEInt16(); // длина строки
-            string m_RToken = reader.ReadHexString(m_RtokenLength); //считываем токен
-            Account n_Current = AccountHolder.AccountList.FirstOrDefault(n => n.Name == m_Uid);
-            if (n_Current != null)
+            int mRtokenLength = reader.ReadLEInt16(); // длина строки
+            string mRToken = reader.ReadHexString(mRtokenLength); //считываем токен
+            Account nCurrent = AccountHolder.AccountList.FirstOrDefault(n => n.Name == mUid);
+            if (nCurrent != null)
             {
-                Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " is landing");
+                Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " is landing");
                 //account numberexist
-                if (n_Current.Token.ToLower() == m_RToken.ToLower())
+                if (nCurrent.Token.ToLower() == mRToken.ToLower())
                 {
-                    net.CurrentAccount = n_Current;
+                    net.CurrentAccount = nCurrent;
                     if (GameServerController.AuthorizedAccounts.ContainsKey(net.CurrentAccount.AccountId))
                     {
                         //Удалим результаты предыдущего коннекта для нормального реконнекта
@@ -512,11 +509,11 @@ namespace ArcheAgeLogin.ArcheAge.Network
                     }
                     //Write account number information Write Online account list
                     GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
-                    Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " landing success");
+                    Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " landing success");
                     //net.SendAsyncHex(new NP_Hex("0C00000000000300000000000000"));
-                    net.SendAsync(new AcJoinResponse_0X00(clientVersion));
+                    net.SendAsync(new AcJoinResponse_0X00(_clientVersion));
                     //net.SendAsyncHex(new NP_Hex("280003005833000020003236393631326537613630393431313862623735303764626334326261353934"));
-                    net.SendAsync(new AcAuthResponse_0X03(clientVersion, net));
+                    net.SendAsync(new AcAuthResponse_0X03(_clientVersion, net));
                     //net.SendAsyncHex(new NP_Hex("0C00000000000300000000000000"));
                     //net.SendAsyncHex(new NP_Hex("0C00000000000600000000000000"));
                     //    000000000600000000000000
@@ -524,30 +521,30 @@ namespace ArcheAgeLogin.ArcheAge.Network
                     //03005833000020003236393631326537613630393431313862623735303764626334326261353934
                     return;
                 }
-                Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name +
-                             " token verification failed：" + m_RToken.ToLower());
+                Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name +
+                             " token verification failed：" + mRToken.ToLower());
             }
             else
             {
-                Logger.Trace("Client try to login to a nonexistent account: " + m_Uid);
+                Logger.Trace("Client try to login to a nonexistent account: " + mUid);
                 //Make New Temporary
                 if (Settings.Default.Account_AutoCreation)
                 {
-                    Logger.Trace("Create new account: " + m_Uid);
-                    Account m_New = new Account
+                    Logger.Trace("Create new account: " + mUid);
+                    Account mNew = new Account
                     {
-                        AccountId = AccountHolder.AccountList.Count + 1,
+                        AccountId = Program.AccountUid.Next(),
                         LastEnteredTime = Utility.CurrentTimeMilliseconds(),
                         AccessLevel = 1,
                         LastIp = net.ToString(),
                         Membership = 1,
-                        Name = m_Uid,
+                        Name = mUid,
                         //Password = "change_password_now",
-                        Token = m_RToken,
+                        Token = mRToken,
                         Characters = 0
                     };
-                    net.CurrentAccount = m_New;
-                    AccountHolder.InsertOrUpdate(m_New);
+                    net.CurrentAccount = mNew;
+                    AccountHolder.InsertOrUpdate(mNew);
                     //Write account number information Write Online account list
                     GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
                     Logger.Trace("Account ID: " + net.CurrentAccount.AccountId + " & Account Name: " + net.CurrentAccount.Name + " landing success");
@@ -559,22 +556,22 @@ namespace ArcheAgeLogin.ArcheAge.Network
                 }
 
                 net.CurrentAccount = null;
-                Logger.Trace("Сan not create account: " + m_Uid);
+                Logger.Trace("Сan not create account: " + mUid);
             }
             //If the front did not terminate, then the account number failed to log in
             net.SendAsync(new NP_ACLoginDenied_0x0C());
         }
         private static void Handle_CAListWorld_0x0A(ArcheAgeConnection net, PacketReader reader)
         {
-            net.SendAsync(new AcWorldList_0X08(clientVersion, net));
+            net.SendAsync(new AcWorldList_0X08(_clientVersion, net));
             //net.SendAsyncHex(new NP_Hex("A802080018010A00D09BD183D186D0B8D0B90101000200000202020000020E00D09AD0B8D0BFD180D0BED0B7D0B00101000200000202020000031000D09CD0B5D0BBD0B8D181D0B0D180D0B00101000200000202020000040800D0A2D0B0D18FD0BD0101000200000202020000051200D090D180D0B0D0BDD0B7D0B5D0B1D0B8D18F0101000200000202020000060800D09ED0BBD0BBD0BE0101000200000202020000070800D090D0BDD0BDD0B00101000200000202020000080E00D090D180D0B0D0BDD0B7D0B5D0B10101000200000202020000090800D098D0BDD0BED18501010002000002020200000A0800D094D0B6D0B8D0BD01020000000000000000000B0E00D09ED180D185D0B8D0B4D0BDD0B001010000000000000000000C0A00D09DD0B0D0B8D0BCD0B001010000000000000000000D1000D090D0BDD182D0B0D0BBD0BBD0BED0BD01010002000002020200000E0E00D0A8D0B0D182D0B8D0B3D0BED0BD01010002000002020200000F0800D090D0B9D18DD1800101000200000202020000101000D0A1D0B0D0BBD18CD184D0B8D180D0B00102000000000000000000110A00D094D0B0D183D182D0B00101000000000000000000120E00D09AD0B0D0BBD0B5D0B8D0BBD18C0101000000000000000000130C00D09AD0B8D180D0B8D0BED1810101000000000000000000140E00D090D0BAD180D0B8D182D0B5D1810101000000000000000000150C00D0ADD0BDD188D0B0D0BAD0B00101000000000000000000160E00D090D188D0B0D0B1D0B5D0BBD18C0101000000000000000000170E00D09AD0B0D0BFD0B0D0B3D0B0D0BD0101000000000000000000180A00D09DD0B5D0B2D0B5D1800102000000000000000000018FA90D000BFF091A000B004A757374746F636865636B010210000E4FC3755AE17949B1F626620F354A930000000000000000"));
         }
         private static void Handle_CAEnterWorld_0x0B(ArcheAgeConnection net, PacketReader reader)
         {
             //net.SendAsyncHex(new NP_Hex("13000A008D0EC89A0E003132372E302E302E31D704"));
             //0B00 0D00 00000000 00000000 01
-            int p_from = reader.ReadLEInt32();
-            int p_to = reader.ReadLEInt32();
+            int pFrom = reader.ReadLEInt32();
+            int pTo = reader.ReadLEInt32();
             byte serverId = reader.ReadByte(); //serverId
             GameServer server = GameServerController.CurrentGameServers.FirstOrDefault(n => n.Value.Id == serverId).Value;
             if (server != null && server.CurrentConnection != null)
@@ -584,20 +581,16 @@ namespace ArcheAgeLogin.ArcheAge.Network
                     net.CurrentAccount.LastEnteredTime = Utility.CurrentTimeMilliseconds();
                     net.CurrentAccount.LastIp = net.ToString(); // IP
                     // генерируем cookie
-                    Random random = new Random();
-                    int cookie = random.Next(255);
-                    cookie += random.Next(255) << 8;
-                    cookie += random.Next(255) << 16;
-                    cookie += random.Next(255) << 24;
+                    int cookie = Cookie.Generate();
                     net.CurrentAccount.Session = cookie; //Designated session
                     //Передаем управление Гейм серверу
                     net.MovedToGame = true;
                     GameServerController.AuthorizedAccounts.Remove(net.CurrentAccount.AccountId);
                     //отсылаем Гейм серверу информацию об аккаунте
-                    server.CurrentConnection.SendAsync(new NET_AccountInfo(clientVersion, net.CurrentAccount));
+                    server.CurrentConnection.SendAsync(new NET_AccountInfo(_clientVersion, net.CurrentAccount));
                     server.CurrentAuthorized.Add(net.CurrentAccount.AccountId);
                     //отсылаем Клиенту информацию о куках
-                    net.SendAsync(new AcWorldCookie_0X0A(clientVersion, server, cookie));
+                    net.SendAsync(new AcWorldCookie_0X0A(_clientVersion, server, cookie));
                 }
             }
             else
@@ -617,22 +610,22 @@ namespace ArcheAgeLogin.ArcheAge.Network
             //1D00 0D00   0A000000 07000000 1AC70000  01  091F831D 0800 0000000000000000
 
             //3.0.3.0
-            int p_from = reader.ReadLEInt32();
-            int p_to = reader.ReadLEInt32();
-            long accountId = reader.ReadLEInt32();
+            int pFrom = reader.ReadLEInt32();
+            int pTo = reader.ReadLEInt32();
+            uint accountId = reader.ReadLEUInt32();
             byte wid = reader.ReadByte();
             int cookie = reader.ReadLEInt32();
 
-            Account n_Current = AccountHolder.AccountList.FirstOrDefault(n => n.AccountId == accountId);
-            if (n_Current != null)
+            Account nCurrent = AccountHolder.AccountList.FirstOrDefault(n => n.AccountId == accountId);
+            if (nCurrent != null)
             {
-                Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " is landing");
-                net.CurrentAccount = n_Current;
+                Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " is landing");
+                net.CurrentAccount = nCurrent;
                 //Write account number information Write Online account list
                 GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
-                Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " landing success");
-                net.SendAsync(new AcJoinResponse_0X00(clientVersion));
-                net.SendAsync(new AcAuthResponse_0X03(clientVersion, net));
+                Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " landing success");
+                net.SendAsync(new AcJoinResponse_0X00(_clientVersion));
+                net.SendAsync(new AcAuthResponse_0X03(_clientVersion, net));
             }
             else
             {
@@ -651,18 +644,18 @@ namespace ArcheAgeLogin.ArcheAge.Network
         private static void Handle_CAChallengeResponse2_0X06(ArcheAgeConnection net, PacketReader reader)
         {
             reader.Offset += 19; //скипаем 19 байт
-            int m_RUidLength = reader.ReadLEInt16(); //длина строки
-            string m_Uid = reader.ReadString(m_RUidLength); //считываем имя "aatest"
-            int m_RtokenLength = reader.ReadLEInt16(); // длина строки
-            string m_RToken = reader.ReadHexString(m_RtokenLength); //считываем токен
-            Account n_Current = AccountHolder.AccountList.FirstOrDefault(n => n.Name == m_Uid);
-            if (n_Current != null)
+            int mRUidLength = reader.ReadLEInt16(); //длина строки
+            string mUid = reader.ReadString(mRUidLength); //считываем имя "aatest"
+            int mRtokenLength = reader.ReadLEInt16(); // длина строки
+            string mRToken = reader.ReadHexString(mRtokenLength); //считываем токен
+            Account nCurrent = AccountHolder.AccountList.FirstOrDefault(n => n.Name == mUid);
+            if (nCurrent != null)
             {
-                Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " is landing");
+                Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " is landing");
                 //account numberexist
-                if (n_Current.Token.ToLower() == m_RToken.ToLower())
+                if (nCurrent.Token.ToLower() == mRToken.ToLower())
                 {
-                    net.CurrentAccount = n_Current;
+                    net.CurrentAccount = nCurrent;
                     if (GameServerController.AuthorizedAccounts.ContainsKey(net.CurrentAccount.AccountId))
                     {
                         //Удалим результаты предыдущего коннекта для нормального реконнекта
@@ -670,45 +663,45 @@ namespace ArcheAgeLogin.ArcheAge.Network
                     }
                     //Write account number information Write Online account list
                     GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
-                    Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " landing success");
-                    net.SendAsync(new AcJoinResponse_0X00(clientVersion));
-                    net.SendAsync(new AcAuthResponse_0X03(clientVersion, net));
+                    Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " landing success");
+                    net.SendAsync(new AcJoinResponse_0X00(_clientVersion));
+                    net.SendAsync(new AcAuthResponse_0X03(_clientVersion, net));
                     return;
                 }
-                Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name +
-                             " token verification failed：" + m_RToken.ToLower());
+                Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name +
+                             " token verification failed：" + mRToken.ToLower());
             }
             else
             {
-                Logger.Trace("Client try to login to a nonexistent account: " + m_Uid);
+                Logger.Trace("Client try to login to a nonexistent account: " + mUid);
                 //Make New Temporary
                 if (Settings.Default.Account_AutoCreation)
                 {
-                    Logger.Trace("Create new account: " + m_Uid);
-                    Account m_New = new Account
+                    Logger.Trace("Create new account: " + mUid);
+                    Account mNew = new Account
                     {
-                        AccountId = AccountHolder.AccountList.Count + 1,
+                        AccountId = Program.AccountUid.Next(),
                         LastEnteredTime = Utility.CurrentTimeMilliseconds(),
                         AccessLevel = 1,
                         LastIp = net.ToString(),
                         Membership = 1,
-                        Name = m_Uid,
+                        Name = mUid,
                         //Password = "new_password",
-                        Token = m_RToken,
+                        Token = mRToken,
                         Characters = 0
                     };
-                    net.CurrentAccount = m_New;
-                    AccountHolder.InsertOrUpdate(m_New);
+                    net.CurrentAccount = mNew;
+                    AccountHolder.InsertOrUpdate(mNew);
                     //Write account number information Write Online account list
                     GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
                     Logger.Trace("Account ID: " + net.CurrentAccount.AccountId + " & Account Name: " + net.CurrentAccount.Name + " landing success");
-                    net.SendAsync(new AcJoinResponse_0X00(clientVersion));
-                    net.SendAsync(new AcAuthResponse_0X03(clientVersion, net));
+                    net.SendAsync(new AcJoinResponse_0X00(_clientVersion));
+                    net.SendAsync(new AcAuthResponse_0X03(_clientVersion, net));
                     return;
                 }
 
                 net.CurrentAccount = null;
-                Logger.Trace("Сan not create account: " + m_Uid);
+                Logger.Trace("Сan not create account: " + mUid);
             }
             //If the front did not terminate, then the account number failed to log in
             net.SendAsync(new NP_ACLoginDenied_0x0C());
@@ -717,7 +710,7 @@ namespace ArcheAgeLogin.ArcheAge.Network
         private static void Handle_CACancelEnterWorld_0X0C(ArcheAgeConnection net, PacketReader reader)
         {
             //var unknown = reader.ReadByteArray(8); //unk?
-            net.SendAsync(new AcWorldList_0X08(clientVersion, net));
+            net.SendAsync(new AcWorldList_0X08(_clientVersion, net));
             //net.SendAsync(new AcAccountWarned_0X0D(clientVersion)); //не обязателен
         }
 
@@ -745,8 +738,8 @@ namespace ArcheAgeLogin.ArcheAge.Network
              */
             //0B00 0D00 00000000 00000000 01
             //reader.Offset += 8; //Undefined Data
-            int p_from = reader.ReadLEInt32();
-            int p_to = reader.ReadLEInt32();
+            int pFrom = reader.ReadLEInt32();
+            int pTo = reader.ReadLEInt32();
             byte serverId = reader.ReadByte(); //serverId
             GameServer server = GameServerController.CurrentGameServers.FirstOrDefault(n => n.Value.Id == serverId).Value;
             if (server != null && server.CurrentConnection != null)
@@ -757,26 +750,22 @@ namespace ArcheAgeLogin.ArcheAge.Network
                     net.CurrentAccount.LastIp = net.ToString(); // IP
                     //net.CurrentAccount.AccountId = net.CurrentAccount.AccountId; // 
                     //create session (cookie)
-                    ///var cookie = 128665876; //$07AB4914 - для теста
-                    ///net.CurrentAccount.Session = cookie;
+                    //var cookie = 128665876; //$07AB4914 - для теста
+                    //net.CurrentAccount.Session = cookie;
                     //AccountHolder.AccountList.FirstOrDefault(n => n.AccId == Convert.ToInt32(cookie));
 
                     // генерируем cookie
-                    Random random = new Random();
-                    int cookie = random.Next(255);
-                    cookie += random.Next(255) << 8;
-                    cookie += random.Next(255) << 16;
-                    cookie += random.Next(255) << 24;
+                    int cookie = Cookie.Generate();
                     net.CurrentAccount.Session = cookie; //Designated session
 
                     //Передаем управление Гейм серверу
                     net.MovedToGame = true;
                     GameServerController.AuthorizedAccounts.Remove(net.CurrentAccount.AccountId);
                     //отсылаем Гейм серверу информацию об аккаунте
-                    server.CurrentConnection.SendAsync(new NET_AccountInfo(clientVersion, net.CurrentAccount));
+                    server.CurrentConnection.SendAsync(new NET_AccountInfo(_clientVersion, net.CurrentAccount));
                     server.CurrentAuthorized.Add(net.CurrentAccount.AccountId);
                     //отсылаем Клиенту информацию о куках
-                    net.SendAsync(new AcWorldCookie_0X0A(clientVersion, server, cookie));
+                    net.SendAsync(new AcWorldCookie_0X0A(_clientVersion, server, cookie));
                 }
             }
             else
@@ -811,21 +800,21 @@ namespace ArcheAgeLogin.ArcheAge.Network
              0018  2079   WideStr[byte] MAC               00:00:00:00:00:00:00:00:00  ($)
              */
 
-            int p_from = reader.ReadLEInt32();
-            int p_to = reader.ReadLEInt32();
-            long accountId = reader.ReadLEInt64();
+            int pFrom = reader.ReadLEInt32();
+            int pTo = reader.ReadLEInt32();
+            uint accountId = reader.ReadLEUInt32();
             int cookie = reader.ReadLEInt32();
 
-            Account n_Current = AccountHolder.AccountList.FirstOrDefault(n => n.AccountId == accountId);
-            if (n_Current != null)
+            Account nCurrent = AccountHolder.AccountList.FirstOrDefault(n => n.AccountId == accountId);
+            if (nCurrent != null)
             {
-                Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " is landing");
-                net.CurrentAccount = n_Current;
+                Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " is landing");
+                net.CurrentAccount = nCurrent;
                 //Write account number information Write Online account list
                 GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
-                Logger.Trace("Account ID: " + n_Current.AccountId + " & Account Name: " + n_Current.Name + " landing success");
-                net.SendAsync(new AcJoinResponse_0X00(clientVersion));
-                net.SendAsync(new AcAuthResponse_0X03(clientVersion, net));
+                Logger.Trace("Account ID: " + nCurrent.AccountId + " & Account Name: " + nCurrent.Name + " landing success");
+                net.SendAsync(new AcJoinResponse_0X00(_clientVersion));
+                net.SendAsync(new AcAuthResponse_0X03(_clientVersion, net));
             }
             else
             {
@@ -836,26 +825,26 @@ namespace ArcheAgeLogin.ArcheAge.Network
         private static void Handle_SignIn(ArcheAgeConnection net, PacketReader reader)
         {
             reader.Offset += 12; //Static Data - 0A 00 00 00 07 00 00 00 00 00 
-            int m_RLoginLength = reader.ReadLEInt16();
+            int mRLoginLength = reader.ReadLEInt16();
             reader.Offset += 2;
-            string m_RLogin = reader.ReadString(m_RLoginLength); //Reading Login
-            Account n_Current = AccountHolder.AccountList.FirstOrDefault(n => n.Name == m_RLogin);
-            if (n_Current == null)
+            string mRLogin = reader.ReadString(mRLoginLength); //Reading Login
+            Account nCurrent = AccountHolder.AccountList.FirstOrDefault(n => n.Name == mRLogin);
+            if (nCurrent == null)
             {
                 //Make New Temporary
                 if (Settings.Default.Account_AutoCreation)
                 {
-                    Account m_New = new Account
+                    Account mNew = new Account
                     {
-                        AccountId = AccountHolder.AccountList.Count + 1,
+                        AccountId = Program.AccountUid.Next(),
                         LastEnteredTime = Utility.CurrentTimeMilliseconds(),
                         AccessLevel = 0,
                         LastIp = net.ToString(),
                         Membership = 0,
-                        Name = m_RLogin
+                        Name = mRLogin
                     };
-                    net.CurrentAccount = m_New;
-                    AccountHolder.AccountList.Add(m_New);
+                    net.CurrentAccount = mNew;
+                    AccountHolder.AccountList.Add(mNew);
                 }
                 else
                 {
@@ -864,10 +853,10 @@ namespace ArcheAgeLogin.ArcheAge.Network
             }
             else
             {
-                net.CurrentAccount = n_Current;
+                net.CurrentAccount = nCurrent;
             }
             // net.SendAsync(new NP_PasswordCorrect(1));
-            net.SendAsync(new NP_ServerList(clientVersion));
+            net.SendAsync(new NP_ServerList(_clientVersion));
         }
 
         private static void Handle_SignIn_Continue(ArcheAgeConnection net, PacketReader reader)
@@ -898,7 +887,7 @@ namespace ArcheAgeLogin.ArcheAge.Network
                 }
             }
             */
-            net.SendAsync(new NP_AcceptLogin(clientVersion));
+            net.SendAsync(new NP_AcceptLogin(_clientVersion));
             net.CurrentAccount.Session = net.GetHashCode();
             net.SendAsync(new NP_PasswordCorrect(net.CurrentAccount.Session));
             Logger.Trace("Account login: " + net.CurrentAccount.Name);
@@ -913,33 +902,33 @@ namespace ArcheAgeLogin.ArcheAge.Network
         private static void Handle_Token_Continue(ArcheAgeConnection net, PacketReader reader)
         {
             reader.Offset = 21;
-            int m_RUidLength = reader.ReadLEInt16();
-            string m_uid = reader.ReadString(m_RUidLength); //Reading Login
-            int m_RtokenLength = reader.ReadLEInt16();
-            string m_RToken = reader.ReadHexString(m_RtokenLength);
-            Account n_Current = AccountHolder.AccountList.FirstOrDefault(n => n.AccountId == Convert.ToInt64(m_uid));
-            if (n_Current != null)
+            int mRUidLength = reader.ReadLEInt16();
+            string mUid = reader.ReadString(mRUidLength); //Reading Login
+            int mRtokenLength = reader.ReadLEInt16();
+            string mRToken = reader.ReadHexString(mRtokenLength);
+            Account nCurrent = AccountHolder.AccountList.FirstOrDefault(n => n.AccountId == Convert.ToInt64(mUid));
+            if (nCurrent != null)
             {
-                Logger.Trace("account number: < " + n_Current.AccountId + ":" + n_Current.Name + "> is landing");
+                Logger.Trace("account number: < " + nCurrent.AccountId + ":" + nCurrent.Name + "> is landing");
                 //accounts exist
-                if (n_Current.Token.ToLower() == m_RToken.ToLower())
+                if (nCurrent.Token.ToLower() == mRToken.ToLower())
                 {
-                    net.CurrentAccount = n_Current;
+                    net.CurrentAccount = nCurrent;
                     //Write account information to online account list
                     GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
-                    Logger.Trace("Account: < " + n_Current.AccountId + ":" + n_Current.Name + "> landing success");
-                    net.SendAsync(new NP_AcceptLogin(clientVersion));
-                    net.SendAsync(new NP_03key(clientVersion));
+                    Logger.Trace("Account: < " + nCurrent.AccountId + ":" + nCurrent.Name + "> landing success");
+                    net.SendAsync(new NP_AcceptLogin(_clientVersion));
+                    net.SendAsync(new NP_03key(_clientVersion));
                     //return server list
                     //net.SendAsync(new NP_ServerList());
                     return;
                 }
-                Logger.Trace("Account: < " + n_Current.AccountId + ":" + n_Current.Name + "> token verification failed: " + m_RToken.ToLower());
+                Logger.Trace("Account: < " + nCurrent.AccountId + ":" + nCurrent.Name + "> token verification failed: " + mRToken.ToLower());
 
             }
             else
             {
-                Logger.Trace("Client attempts to login to a nonexistent account" + m_uid);
+                Logger.Trace("Client attempts to login to a nonexistent account" + mUid);
             }
 
             //If there is no termination before, the account login fails
@@ -950,19 +939,19 @@ namespace ArcheAgeLogin.ArcheAge.Network
         private static void Handle_Token_Continue2(ArcheAgeConnection net, PacketReader reader)
         {
 
-            Account n_Current = AccountHolder.AccountList.FirstOrDefault(n => n.AccountId == 1);
-            if (n_Current != null)
+            Account nCurrent = AccountHolder.AccountList.FirstOrDefault(n => n.AccountId == 1);
+            if (nCurrent != null)
             {
-                Logger.Trace("The account is trying to login: " + n_Current.Name);
+                Logger.Trace("The account is trying to login: " + nCurrent.Name);
                 //Account exists
                 // if (n_Current.Password.ToLower() == m_RToken.ToLower())
                 // {
-                net.CurrentAccount = n_Current;
+                net.CurrentAccount = nCurrent;
                 //Write account information to online account list
                 GameServerController.AuthorizedAccounts.Add(net.CurrentAccount.AccountId, net.CurrentAccount);
                 Logger.Trace("Account login successful: " + net.CurrentAccount.Name);
-                net.SendAsync(new NP_AcceptLogin(clientVersion));
-                net.SendAsync(new NP_03key(clientVersion));
+                net.SendAsync(new NP_AcceptLogin(_clientVersion));
+                net.SendAsync(new NP_03key(_clientVersion));
                 //Return to server list
                 //net.SendAsync(new NP_ServerList());
                 return;
@@ -979,17 +968,10 @@ namespace ArcheAgeLogin.ArcheAge.Network
             net.SendAsyncHex(new NP_PasswordCorrect(1));
         }
 
-        //Return server connection into packets
-        private static void Handle_0d(ArcheAgeConnection net, PacketReader reader)
-        {
-            net.SendAsync0d(new NP_PasswordCorrect(1));
-            //net.SendAsync(new NP_ServerList());
-        }
-
         private static void Handle_RequestServerList(ArcheAgeConnection net, PacketReader reader)
         {
             byte[] unknown = reader.ReadByteArray(8); //unk?
-            net.SendAsync(new NP_ServerList(clientVersion));
+            net.SendAsync(new NP_ServerList(_clientVersion));
         }
 
         /**
@@ -1017,16 +999,12 @@ namespace ArcheAgeLogin.ArcheAge.Network
                     //net.CurrentAccount.Session = num= 1323126619;//Specify session
 
                     // генерируем cookie
-                    Random random = new Random();
-                    int cookie = random.Next(255);
-                    cookie += random.Next(255) << 8;
-                    cookie += random.Next(255) << 16;
-                    cookie += random.Next(255) << 24;
+                    int cookie = Cookie.Generate();
                     net.CurrentAccount.Session = cookie; //Designated session
 
                     net.MovedToGame = true;
                     GameServerController.AuthorizedAccounts.Remove(net.CurrentAccount.AccountId);
-                    server.CurrentConnection.SendAsync(new NET_AccountInfo(clientVersion, net.CurrentAccount));
+                    server.CurrentConnection.SendAsync(new NET_AccountInfo(_clientVersion, net.CurrentAccount));
                     server.CurrentAuthorized.Add(net.CurrentAccount.AccountId);
                     net.SendAsync(new NP_SendGameAuthorization(server, cookie));
                 }
@@ -1043,14 +1021,14 @@ namespace ArcheAgeLogin.ArcheAge.Network
 
         private static void Register(ushort opcode, OnPacketReceive<ArcheAgeConnection> e)
         {
-            m_LHandlers[opcode] = new PacketHandler<ArcheAgeConnection>(opcode, e);
-            m_Maintained++;
+            _mLHandlers[opcode] = new PacketHandler<ArcheAgeConnection>(opcode, e);
+            _mMaintained++;
         }
 
         private static void Register(ushort opcode, OnPacketReceive<GameConnection> e)
         {
-            m_GHandlers[opcode] = new PacketHandler<GameConnection>(opcode, e);
-            m_Maintained++;
+            _mGHandlers[opcode] = new PacketHandler<GameConnection>(opcode, e);
+            _mMaintained++;
         }
     }
 }
